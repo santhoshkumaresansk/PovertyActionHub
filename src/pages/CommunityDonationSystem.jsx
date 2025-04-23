@@ -14,8 +14,7 @@ import {
   FaSearch,
   FaFilter,
   FaTrash,
-  FaEdit,
-  FaTrophy
+  FaEdit
 } from 'react-icons/fa';
 import { MdLocationOn, MdDescription, MdWavingHand } from 'react-icons/md';
 import { RiTeamFill } from 'react-icons/ri';
@@ -34,36 +33,9 @@ const userIcon = createCustomIcon("blue");
 const donationIcon = createCustomIcon("green");
 const teamIcon = createCustomIcon("red");
 
-// Points calculation function
-const calculateDonationPoints = (items) => {
-  const itemPoints = {
-    'Clothes': 10,
-    'Books': 15,
-    'Furniture': 25,
-    'Electronics': 30,
-    'Toys': 10,
-    'Medical Supplies': 40,
-    'Food': 20,
-    'Utensils': 10,
-    'Stationery': 5,
-    'Blankets': 15,
-    'Shoes': 10,
-    'Other': 5
-  };
-  
-  return items.reduce((total, item) => total + (itemPoints[item] || 0), 0);
-};
-
-// Badge system
-const getBadge = (points) => {
-  if (points >= 901) return { name: "Diamond", color: "from-blue-200 to-blue-400 text-blue-800", icon: "💎" };
-  if (points >= 601) return { name: "Platinum", color: "from-gray-200 to-gray-400 text-gray-800", icon: "🏆" };
-  if (points >= 301) return { name: "Gold", color: "from-yellow-200 to-yellow-500 text-yellow-800", icon: "🥇" };
-  if (points >= 101) return { name: "Silver", color: "from-gray-200 to-gray-300 text-gray-800", icon: "🥈" };
-  return { name: "Bronze", color: "from-amber-700 to-amber-900 text-white", icon: "🥉" };
-};
-
+// Main Component
 const CommunityDonationSystem = () => {
+  // State management
   const [activeTab, setActiveTab] = useState('donate');
   const [donationType, setDonationType] = useState('direct');
   const [items, setItems] = useState([]);
@@ -78,72 +50,195 @@ const CommunityDonationSystem = () => {
     description: '',
     witnessName: '',
     witnessContact: '',
-    photoProof: null,
-    teamId: ''
+    photoProof: null
   });
-  const [location, setLocation] = useState([12.9716, 77.5946]);
+  const [location, setLocation] = useState([12.9716, 77.5946]); // Default to Bangalore
   const [mapType, setMapType] = useState('street');
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('all');
   const [selectedDonation, setSelectedDonation] = useState(null);
-  const [teamPoints, setTeamPoints] = useState({});
 
+  // Available items for donation
   const itemCategories = [
     'Clothes', 'Books', 'Furniture', 'Electronics',
     'Toys', 'Medical Supplies', 'Food', 'Utensils',
     'Stationery', 'Blankets', 'Shoes', 'Other'
   ];
 
+  // Mock data for available donations
   useEffect(() => {
     const mockDonations = [
-      {
-        id: 1,
-        donorName: 'Rahul Sharma',
-        phone: '9876543210',
-        address: '123 MG Road, Bangalore, Karnataka',
-        items: ['Books', 'Clothes'],
-        description: 'Good condition items',
-        location: [12.9756, 77.5926],
-        status: 'available',
-        date: '2023-05-15',
-        points: 25,
-        teamId: 'Green Earth'
-      },
-      {
-        id: 2,
-        donorName: 'Sneha Patel',
-        phone: '9123456780',
-        address: '45 Ring Road, Ahmedabad, Gujarat',
-        items: ['Toys', 'Shoes'],
-        description: 'Clean and gently used',
-        location: [23.0225, 72.5714],
-        status: 'available',
-        date: '2023-06-20',
-        points: 20,
-        teamId: 'Hope Foundation'
-      },
-      {
-        id: 3,
-        donorName: 'Arjun Mehta',
-        phone: '9012345678',
-        address: '56 CP, Connaught Place, New Delhi',
-        items: ['Clothes'],
-        description: 'Kids clothes, good quality',
-        location: [28.6315, 77.2167],
-        status: 'available',
-        date: '2023-07-01',
-        points: 10,
-        teamId: 'Education First'
-      }
-    ];
-    
+        {
+          id: 1,
+          donorName: 'Rahul Sharma',
+          phone: '9876543210',
+          address: '123 MG Road, Bangalore, Karnataka',
+          items: ['Books', 'Clothes'],
+          description: 'Good condition items',
+          location: [12.9756, 77.5926],
+          status: 'available',
+          date: '2023-05-15'
+        },
+        {
+          id: 2,
+          donorName: 'Sneha Patel',
+          phone: '9123456780',
+          address: '45 Ring Road, Ahmedabad, Gujarat',
+          items: ['Toys', 'Shoes'],
+          description: 'Clean and gently used',
+          location: [23.0225, 72.5714],
+          status: 'available',
+          date: '2023-06-20'
+        },
+        {
+          id: 3,
+          donorName: 'Arjun Mehta',
+          phone: '9012345678',
+          address: '56 CP, Connaught Place, New Delhi',
+          items: ['Clothes'],
+          description: 'Kids clothes, good quality',
+          location: [28.6315, 77.2167],
+          status: 'available',
+          date: '2023-07-01'
+        },
+        {
+          id: 4,
+          donorName: 'Meera Nair',
+          phone: '9988776655',
+          address: '12 Fort Road, Trivandrum, Kerala',
+          items: ['Books', 'Stationery'],
+          description: 'School items for donation',
+          location: [8.5241, 76.9366],
+          status: 'available',
+          date: '2023-06-12'
+        },
+        {
+          id: 5,
+          donorName: 'Ravi Verma',
+          phone: '9871234567',
+          address: 'Boring Road, Patna, Bihar',
+          items: ['Utensils', 'Clothes'],
+          description: 'Household donation',
+          location: [25.5941, 85.1376],
+          status: 'available',
+          date: '2023-06-25'
+        },
+        {
+          id: 6,
+          donorName: 'Kavya Reddy',
+          phone: '9812345678',
+          address: 'Madhapur, Hyderabad, Telangana',
+          items: ['Shoes', 'Clothes'],
+          description: 'Used but clean shoes',
+          location: [17.4399, 78.4483],
+          status: 'available',
+          date: '2023-07-10'
+        },
+        {
+          id: 7,
+          donorName: 'Aniket Joshi',
+          phone: '9765432109',
+          address: 'FC Road, Pune, Maharashtra',
+          items: ['Books'],
+          description: 'Academic books',
+          location: [18.5204, 73.8567],
+          status: 'available',
+          date: '2023-07-15'
+        },
+        {
+          id: 8,
+          donorName: 'Fatima Khan',
+          phone: '9823456789',
+          address: 'Hazratganj, Lucknow, Uttar Pradesh',
+          items: ['Clothes', 'Blankets'],
+          description: 'Winter clothes and blankets',
+          location: [26.8467, 80.9462],
+          status: 'available',
+          date: '2023-07-18'
+        },
+        {
+          id: 9,
+          donorName: 'Rohan Das',
+          phone: '9876501234',
+          address: 'Salt Lake, Kolkata, West Bengal',
+          items: ['Clothes', 'Toys'],
+          description: 'Used kids toys and clothes',
+          location: [22.5726, 88.3639],
+          status: 'available',
+          date: '2023-08-01'
+        },
+        {
+          id: 10,
+          donorName: 'Neha Kulkarni',
+          phone: '9944556677',
+          address: 'Race Course, Coimbatore, Tamil Nadu',
+          items: ['Books', 'Utensils'],
+          description: 'Kitchen items and novels',
+          location: [11.0168, 76.9558],
+          status: 'available',
+          date: '2023-08-05'
+        },
+        {
+          id: 11,
+          donorName: 'Deepak Thakur',
+          phone: '9870001111',
+          address: 'Sector 15, Chandigarh',
+          items: ['Stationery', 'Shoes'],
+          description: 'Donating for school kids',
+          location: [30.7333, 76.7794],
+          status: 'available',
+          date: '2023-08-08'
+        },
+        {
+          id: 12,
+          donorName: 'Priya Iyer',
+          phone: '9811122233',
+          address: 'Adyar, Chennai, Tamil Nadu',
+          items: ['Books', 'Blankets'],
+          description: 'Clean and well kept',
+          location: [13.0082, 80.2570],
+          status: 'available',
+          date: '2023-08-12'
+        },
+        {
+          id: 13,
+          donorName: 'Sanjay Dey',
+          phone: '9800112233',
+          address: 'Lalpur, Ranchi, Jharkhand',
+          items: ['Clothes', 'Shoes'],
+          description: 'Worn 2-3 times only',
+          location: [23.3441, 85.3096],
+          status: 'available',
+          date: '2023-08-18'
+        },
+        {
+          id: 14,
+          donorName: 'Divya Singh',
+          phone: '9888777666',
+          address: 'Rajendra Nagar, Indore, Madhya Pradesh',
+          items: ['Toys', 'Books'],
+          description: 'Old toys in good condition',
+          location: [22.7196, 75.8577],
+          status: 'available',
+          date: '2023-08-22'
+        },
+        {
+          id: 15,
+          donorName: 'Imran Shaikh',
+          phone: '9786543210',
+          address: 'Lal Darwaza, Ahmedabad, Gujarat',
+          items: ['Clothes', 'Shoes'],
+          description: 'Freshly washed and packed',
+          location: [23.0339, 72.5850],
+          status: 'available',
+          date: '2023-08-30'
+        }
+      ];
+      
     setAvailableDonations(mockDonations);
-    
-    // Initialize team points from localStorage
-    const storedPoints = JSON.parse(localStorage.getItem('teamPoints')) || {};
-    setTeamPoints(storedPoints);
   }, []);
 
+  // Form handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -161,67 +256,40 @@ const CommunityDonationSystem = () => {
     setFormData({ ...formData, photoProof: e.target.files[0] });
   };
 
-  const updateLeaderboard = (teamId, points, donorName) => {
-    const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-    const teamIndex = leaderboard.findIndex(item => item.teamId === teamId);
-    
-    if (teamIndex >= 0) {
-      leaderboard[teamIndex].points += points;
-      leaderboard[teamIndex].donations += 1;
-    } else {
-      leaderboard.push({
-        id: Date.now(),
-        name: donorName,
-        teamId: teamId,
-        points: points,
-        donations: 1,
-        volunteerHours: 0,
-        rank: leaderboard.length + 1
-      });
-    }
-    
-    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-    
-    // Update team points
-    const updatedPoints = { ...teamPoints, [teamId]: (teamPoints[teamId] || 0) + points };
-    setTeamPoints(updatedPoints);
-    localStorage.setItem('teamPoints', JSON.stringify(updatedPoints));
-  };
-
   const handleSubmitDonation = (e) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.phone || !formData.address || 
-        !formData.city || !formData.state || items.length === 0 || !formData.teamId) {
+    // Validate required fields
+    if (!formData.name || !formData.phone || !formData.address || !formData.city || !formData.state || items.length === 0) {
       alert('Please fill all required fields and select at least one item');
       return;
     }
 
-    const points = calculateDonationPoints(items);
-
+    // Create new donation with all form data
     const newDonation = {
-      id: Date.now(),
+      id: Date.now(), // Generate unique ID
       donorName: formData.name,
       phone: formData.phone,
       address: `${formData.address}, ${formData.city}, ${formData.state}`,
-      items: [...items],
+      items: [...items], // Copy the items array
       description: formData.description,
-      location: location,
+      location: location, // Using the current location state
       status: 'available',
       date: new Date().toISOString().split('T')[0],
       witnessName: formData.witnessName || '',
       witnessContact: formData.witnessContact || '',
-      photoProof: formData.photoProof ? URL.createObjectURL(formData.photoProof) : null,
-      points: points,
-      teamId: formData.teamId
+      photoProof: formData.photoProof ? URL.createObjectURL(formData.photoProof) : null
     };
 
+    // Add to available donations
     setAvailableDonations(prev => [...prev, newDonation]);
-    updateLeaderboard(formData.teamId, points, formData.name);
     
-    alert(`Thank you for your donation! You earned ${points} points. Teams will contact you for collection.`);
+    // Show success message
+    alert('Thank you for your donation! Teams will contact you for collection.');
+    
+    // Reset form and switch to available tab
     resetForm();
-    setActiveTab('available');
+    setActiveTab('available'); // Automatically switch to the available donations view
   };
 
   const handleClaimDonation = (id) => {
@@ -242,12 +310,12 @@ const CommunityDonationSystem = () => {
       description: '',
       witnessName: '',
       witnessContact: '',
-      photoProof: null,
-      teamId: ''
+      photoProof: null
     });
     setItems([]);
   };
 
+  // Filter donations based on search and filter
   const filteredDonations = availableDonations.filter(donation => {
     const matchesSearch = donation.donorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          donation.address.toLowerCase().includes(searchQuery.toLowerCase());
@@ -257,6 +325,7 @@ const CommunityDonationSystem = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <header className="bg-blue-600 text-white p-4 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -279,9 +348,11 @@ const CommunityDonationSystem = () => {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="container mx-auto p-4">
         {activeTab === 'donate' ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Donation Form */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <FaBoxOpen /> Donation Details
@@ -397,69 +468,48 @@ const CommunityDonationSystem = () => {
                     />
                   </div>
 
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Team/NGO ID*</label>
-                    <input
-                      type="text"
-                      name="teamId"
-                      value={formData.teamId}
-                      onChange={handleInputChange}
-                      className="w-full p-3 border rounded-lg"
-                      placeholder="Enter your team or NGO ID"
-                      required
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      This will be used to track your contribution points in the leaderboard
-                    </p>
-                  </div>
-
                   {donationType === 'available' && (
-                    <div className="mb-4 p-4 bg-yellow-50 rounded-lg">
-                      <h3 className="font-medium mb-2 flex items-center gap-2">
-                        <RiTeamFill /> For Collection Teams
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-1">Witness Name</label>
-                          <input
-                            type="text"
-                            name="witnessName"
-                            value={formData.witnessName}
-                            onChange={handleInputChange}
-                            className="w-full p-3 border rounded-lg"
-                          />
+                    <>
+                      <div className="mb-4 p-4 bg-yellow-50 rounded-lg">
+                        <h3 className="font-medium mb-2 flex items-center gap-2">
+                          <RiTeamFill /> For Collection Teams
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Witness Name</label>
+                            <input
+                              type="text"
+                              name="witnessName"
+                              value={formData.witnessName}
+                              onChange={handleInputChange}
+                              className="w-full p-3 border rounded-lg"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Witness Contact</label>
+                            <input
+                              type="tel"
+                              name="witnessContact"
+                              value={formData.witnessContact}
+                              onChange={handleInputChange}
+                              className="w-full p-3 border rounded-lg"
+                            />
+                          </div>
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1">Witness Contact</label>
+                        <div className="mt-3">
+                          <label className="block text-sm font-medium mb-1 flex items-center gap-1">
+                            <FaCamera /> Photo Proof (Optional)
+                          </label>
                           <input
-                            type="tel"
-                            name="witnessContact"
-                            value={formData.witnessContact}
-                            onChange={handleInputChange}
-                            className="w-full p-3 border rounded-lg"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileUpload}
+                            className="w-full p-2 border rounded-lg"
                           />
                         </div>
                       </div>
-                      <div className="mt-3">
-                        <label className="block text-sm font-medium mb-1 flex items-center gap-1">
-                          <FaCamera /> Photo Proof (Optional)
-                        </label>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileUpload}
-                          className="w-full p-2 border rounded-lg"
-                        />
-                      </div>
-                    </div>
+                    </>
                   )}
-
-                  <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
-                    <FaTrophy className="text-yellow-500" />
-                    <span className="text-sm">
-                      Estimated points for this donation: <strong>{calculateDonationPoints(items)} points</strong>
-                    </span>
-                  </div>
 
                   <button
                     type="submit"
@@ -471,6 +521,7 @@ const CommunityDonationSystem = () => {
               </div>
             </div>
 
+            {/* Map View */}
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               <div className="p-4 border-b flex justify-between items-center">
                 <h2 className="text-xl font-bold flex items-center gap-2">
@@ -521,9 +572,6 @@ const CommunityDonationSystem = () => {
                           <p className="text-xs mt-1">
                             <span className="font-medium">Items:</span> {donation.items.join(', ')}
                           </p>
-                          <p className="text-xs mt-1">
-                            <span className="font-medium">Points:</span> {donation.points}
-                          </p>
                         </div>
                       </Popup>
                     </Marker>
@@ -533,6 +581,7 @@ const CommunityDonationSystem = () => {
             </div>
           </div>
         ) : (
+          /* Available Donations Tab */
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="p-4 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <h2 className="text-xl font-bold flex items-center gap-2">
@@ -568,7 +617,6 @@ const CommunityDonationSystem = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donor</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -576,68 +624,57 @@ const CommunityDonationSystem = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredDonations.length > 0 ? (
-                    filteredDonations.map(donation => {
-                      const badge = getBadge(donation.points);
-                      return (
-                        <tr key={donation.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="font-medium">{donation.donorName}</div>
-                            <div className="text-sm text-gray-500">{donation.phone}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex flex-wrap gap-1">
-                              {donation.items.map(item => (
-                                <span key={item} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                  {item}
-                                </span>
-                              ))}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {donation.address}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <span className="font-bold">{donation.points}</span>
-                              <span className={`ml-2 px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${badge.color}`}>
-                                {badge.icon} {badge.name}
+                    filteredDonations.map(donation => (
+                      <tr key={donation.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="font-medium">{donation.donorName}</div>
+                          <div className="text-sm text-gray-500">{donation.phone}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex flex-wrap gap-1">
+                            {donation.items.map(item => (
+                              <span key={item} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                {item}
                               </span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {donation.date}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              donation.status === 'available' 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-purple-100 text-purple-800'
-                            }`}>
-                              {donation.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {donation.address}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {donation.date}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            donation.status === 'available' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-purple-100 text-purple-800'
+                          }`}>
+                            {donation.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <button
+                            onClick={() => setSelectedDonation(donation)}
+                            className="text-blue-600 hover:text-blue-900 mr-3"
+                          >
+                            View
+                          </button>
+                          {donation.status === 'available' && (
                             <button
-                              onClick={() => setSelectedDonation(donation)}
-                              className="text-blue-600 hover:text-blue-900 mr-3"
+                              onClick={() => handleClaimDonation(donation.id)}
+                              className="text-green-600 hover:text-green-900"
                             >
-                              View
+                              Claim
                             </button>
-                            {donation.status === 'available' && (
-                              <button
-                                onClick={() => handleClaimDonation(donation.id)}
-                                className="text-green-600 hover:text-green-900"
-                              >
-                                Claim
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })
+                          )}
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
+                      <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
                         No donations found
                       </td>
                     </tr>
@@ -649,6 +686,7 @@ const CommunityDonationSystem = () => {
         )}
       </main>
 
+      {/* Donation Detail Modal */}
       {selectedDonation && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -669,7 +707,6 @@ const CommunityDonationSystem = () => {
                   <p><span className="font-medium">Name:</span> {selectedDonation.donorName}</p>
                   <p><span className="font-medium">Phone:</span> {selectedDonation.phone}</p>
                   <p><span className="font-medium">Address:</span> {selectedDonation.address}</p>
-                  <p><span className="font-medium">Team ID:</span> {selectedDonation.teamId}</p>
                 </div>
                 
                 <h4 className="font-medium mt-4 mb-2">Items</h4>
@@ -686,14 +723,6 @@ const CommunityDonationSystem = () => {
                 <h4 className="font-medium mb-2">Additional Information</h4>
                 <p className="mb-4">{selectedDonation.description || 'No additional description'}</p>
                 
-                <div className="p-3 bg-blue-50 rounded-lg mb-4">
-                  <div className="flex items-center gap-2">
-                    <FaTrophy className="text-yellow-500" />
-                    <span className="font-medium">Points Earned:</span>
-                    <span className="font-bold">{selectedDonation.points} points</span>
-                  </div>
-                </div>
-
                 {selectedDonation.witnessName && (
                   <>
                     <h4 className="font-medium mb-2">Witness Details</h4>

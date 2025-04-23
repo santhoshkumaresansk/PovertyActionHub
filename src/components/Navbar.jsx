@@ -1,7 +1,19 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Home, HeartHandshake, Trophy, CalendarCheck, ShieldCheck, MapPin, Phone, BookText } from "lucide-react";
+import { 
+  Menu, 
+  X, 
+  Home, 
+  HeartHandshake, 
+  Trophy, 
+  CalendarCheck, 
+  ShieldCheck, 
+  MapPin, 
+  Phone, 
+  BookText,
+  Boxes // New icon for community donations
+} from "lucide-react";
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -9,12 +21,15 @@ const Navbar = () => {
     const location = useLocation();
 
     const navItems = [
-        { path: "/", label: "Home", icon: <Home size={18} className="mr-2" /> },
-        { path: "/donation", label: "Donation", icon: <HeartHandshake size={18} className="mr-2" /> },
+        { path: "/home", label: "Home", icon: <Home size={18} className="mr-2" /> },
+        { path: "/donation", label: "Direct Donation", icon: <HeartHandshake size={18} className="mr-2" /> },
+        { path: "/community-donations", label: "Community Donations", icon: <Boxes size={18} className="mr-2" /> },
         { path: "/leaderboard", label: "Leaderboard", icon: <Trophy size={18} className="mr-2" /> },
         { path: "/projects", label: "Projects", icon: <CalendarCheck size={18} className="mr-2" /> },
         { path: "/verification", label: "Verification", icon: <ShieldCheck size={18} className="mr-2" /> },
         { path: "/weekly-tasks", label: "Weekly Tasks", icon: <BookText size={18} className="mr-2" /> },
+        { path: "/success-stories", label: "Success Stories", icon: <Phone size={18} className="mr-2" /> },
+        { path: "/blog-creator", label: "Blogs", icon: <MapPin size={18} className="mr-2" /> },
         { path: "/contact", label: "Contact", icon: <Phone size={18} className="mr-2" /> },
         { path: "/live-location", label: "Locations", icon: <MapPin size={18} className="mr-2" /> }
     ];
@@ -23,7 +38,7 @@ const Navbar = () => {
         <nav className="bg-gradient-to-r from-red-600 to-red-700 p-4 shadow-lg fixed w-full top-0 left-0 z-50">
             <div className="container mx-auto flex justify-between items-center px-4">
                 {/* Logo with Home Link */}
-                <Link to="/" className="flex items-center space-x-2">
+                <Link to="/home" className="flex items-center space-x-2">
                     <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -97,11 +112,11 @@ const Navbar = () => {
                         whileTap={{ scale: 0.95 }}
                     >
                         <Link
-                            to="/donation"
+                            to="/community-donations"
                             className="flex items-center px-4 py-2 bg-white text-red-600 font-medium rounded-lg shadow hover:bg-gray-100 transition-all"
                         >
-                            <HeartHandshake size={18} className="mr-2" />
-                            Donate Now
+                            <Boxes size={18} className="mr-2" />
+                            Donate Items
                         </Link>
                     </motion.div>
                 </div>
@@ -151,12 +166,12 @@ const Navbar = () => {
                                 transition={{ type: "spring", delay: 0.1 }}
                             >
                                 <Link
-                                    to="/donation"
+                                    to="/community-donations"
                                     className="flex items-center justify-center px-6 py-4 bg-red-600 text-white font-medium hover:bg-red-700"
                                     onClick={() => setMenuOpen(false)}
                                 >
-                                    <HeartHandshake size={18} className="mr-2" />
-                                    Donate Now
+                                    <Boxes size={18} className="mr-2" />
+                                    Donate Items
                                 </Link>
                             </motion.li>
                         </ul>

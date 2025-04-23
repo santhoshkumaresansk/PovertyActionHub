@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import TeamIDPrompt from "./components/TeamIDPrompt";
 
-// Importing Pages
+// Import Pages
 import Home from "./pages/Home";
 import HomeLogin from "./pages/HomeLogin";
 import SignUp from "./pages/SignUp";
@@ -17,39 +17,60 @@ import WeeklyInCenter from "./pages/WeeklyInCenter";
 import LiveLocation from "./pages/LiveLocation";
 import History from "./pages/History";
 import TeamIDPage from "./pages/TeamIDPage";
+import CommunityDonationSystem from "./pages/CommunityDonationSystem";
+import SuccessStories from "./pages/SuccessStories"; // New import
+import BlogCreator from "./pages/BlogCreator"; // New import
 
-const isAuthenticated = localStorage.getItem("user");  // Check if user is logged in
+// Import Auth Context
+import { useAuth, AuthProvider } from "./context/AuthContext";
+
+// PrivateRoute component for protecting authenticated routes
+const PrivateRoute = ({ children }) => {
+    const { token } = useAuth();
+    return token ? children : <Navigate to="/login" />;
+};
 
 const App = () => {
     return (
-        <Router>
-            <div className="flex flex-col min-h-screen">
-                {/* Navbar */}
-                <Navbar />  
-                {/* Team ID Prompt */}
-                <TeamIDPrompt />
-                {/* Main Content */}
-                <main className="flex-grow pt-16">
-                    <Routes>
-                        <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
-                        <Route path="/login" element={<HomeLogin />} />
-                        <Route path="/signup" element={<SignUp />} />
-                        <Route path="/donation" element={<Donation />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/leaderboard" element={<Leaderboard />} />
-                        <Route path="/verification" element={<Verification />} />
-                        <Route path="/projects" element={<Projects />} />
-                        <Route path="/weekly-tasks" element={<WeeklyTasks />} />
-                        <Route path="/weekly-in-center" element={<WeeklyInCenter />} />
-                        <Route path="/live-location" element={<LiveLocation />} />
-                        <Route path="/history" element={<History />} />
-                        <Route path="/team-id" element={<TeamIDPage />} />
-                    </Routes>
-                </main>
-                {/* Footer */}
-                <Footer />
-            </div>
-        </Router>
+        <AuthProvider>
+            <Router>
+                <div className="flex flex-col min-h-screen">
+                    {/* Navbar */}
+                    <Navbar />
+                    {/* Team ID Prompt */}
+                    <TeamIDPrompt />
+                    {/* Main Content */}
+                    <main className="flex-grow pt-16">
+                        <Routes>
+                            {/* Redirect root to login page or homepage */}
+                            <Route path="/" element={<Navigate to="/login" />} />
+
+                            {/* Public Routes */}
+                            <Route path="/login" element={<HomeLogin />} />
+                            <Route path="/signup" element={<SignUp />} />
+
+                            {/* Private Routes */}
+                            <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+                            <Route path="/donation" element={<PrivateRoute><Donation /></PrivateRoute>} />
+                            <Route path="/community-donations" element={<PrivateRoute><CommunityDonationSystem /></PrivateRoute>} />
+                            <Route path="/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
+                            <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
+                            <Route path="/verification" element={<PrivateRoute><Verification /></PrivateRoute>} />
+                            <Route path="/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />
+                            <Route path="/weekly-tasks" element={<PrivateRoute><WeeklyTasks /></PrivateRoute>} />
+                            <Route path="/weekly-in-center" element={<PrivateRoute><WeeklyInCenter /></PrivateRoute>} />
+                            <Route path="/live-location" element={<PrivateRoute><LiveLocation /></PrivateRoute>} />
+                            <Route path="/history" element={<PrivateRoute><History /></PrivateRoute>} />
+                            <Route path="/team-id" element={<PrivateRoute><TeamIDPage /></PrivateRoute>} />
+                            <Route path="/success-stories" element={<PrivateRoute><SuccessStories /></PrivateRoute>} />
+                            <Route path="/blog-creator" element={<PrivateRoute><BlogCreator /></PrivateRoute>} />
+                        </Routes>
+                    </main>
+                    {/* Footer */}
+                    <Footer />
+                </div>
+            </Router>
+        </AuthProvider>
     );
 };
 
