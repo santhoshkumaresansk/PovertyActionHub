@@ -1,5 +1,5 @@
 // src/api.js
-const API_BASE_URL = "https://mock-api.donation-service.com/v1";
+const API_BASE_URL = "https://povertyactionhub.onrender.com";
 
 export const api = {
   // Get nearby donation centers
